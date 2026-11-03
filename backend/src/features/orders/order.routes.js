@@ -20,3 +20,4 @@ router.get('/admin', verifyAdmin, getAllOrders);
 router.patch('/:id/status', verifyAdmin, updateStatus);
 
 export default router;
+

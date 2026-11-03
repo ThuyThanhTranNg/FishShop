@@ -8,3 +8,4 @@ export const sendSuccess = (res, data = null, message = 'Success', statusCode = 
     data,
   });
 };
+

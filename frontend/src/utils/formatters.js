@@ -24,3 +24,4 @@ export const formatDate = (date) => {
     year: 'numeric',
   }).format(new Date(date));
 };
+

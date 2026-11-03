@@ -11,3 +11,4 @@ router.get('/', verifyToken, verifyAdmin, getUsers);
 router.put('/profile', verifyToken, updateProfile);
 
 export default router;
+

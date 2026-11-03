@@ -43,3 +43,4 @@ export const removeItemFromCart = async (userId, productId) => {
   await cart.save();
   return await cart.populate('items.product');
 };
+

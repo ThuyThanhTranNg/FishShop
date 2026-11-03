@@ -20,3 +20,4 @@ router.put('/:id', verifyToken, verifyAdmin, updateProduct);
 router.delete('/:id', verifyToken, verifyAdmin, deleteProduct);
 
 export default router;
+

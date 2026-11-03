@@ -11,3 +11,4 @@ router.get('/product/:productId', getProductReviews);
 router.post('/product/:productId', verifyToken, createReview);
 
 export default router;
+

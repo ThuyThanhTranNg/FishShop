@@ -18,3 +18,4 @@ export const updateProfile = async (req, res, next) => {
     next(error);
   }
 };
+
