@@ -9,6 +9,7 @@
     "build:frontend": "npm --prefix frontend run build",
     "start:backend": "npm --prefix backend start",
     "seed:backend": "npm --prefix backend run seed",
+    "setup:env": "node -e \"fs.copyFileSync('backend/.env.example', 'backend/.env'); console.log('Đã tạo backend/.env thành công!');\"",
     "client": "npm --prefix frontend run dev",
     "server": "npm --prefix backend run dev"
   }

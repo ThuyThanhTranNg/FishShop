@@ -87,12 +87,21 @@ npm --prefix frontend install
 ```
 
 ### Bước 2: Cấu hình biến môi trường (`.env`)
-Tạo file `.env` bên trong thư mục `backend/` (hoặc nhân bản từ `backend/.env.example`):
-- **Windows (PowerShell):**
+Chỉ cần chạy lệnh sau ngay trong terminal ở thư mục gốc `AquaCraft` để tự động tạo file `backend/.env`:
+```bash
+npm run setup:env
+```
+
+*(Hoặc chạy lệnh copy tương ứng theo hệ điều hành/terminal bạn đang dùng):*
+- **PowerShell (mặc định Windows / VS Code):**
   ```powershell
   Copy-Item backend/.env.example backend/.env
   ```
-- **macOS / Linux:**
+- **Command Prompt (CMD):**
+  ```cmd
+  copy backend\.env.example backend\.env
+  ```
+- **Git Bash / macOS / Linux:**
   ```bash
   cp backend/.env.example backend/.env
   ```
