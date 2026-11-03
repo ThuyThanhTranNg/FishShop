@@ -79,22 +79,56 @@ AquaCraft/
 
 ## 2. Hướng dẫn cài đặt & Khởi chạy
 
-### Cài đặt dependencies:
+### Bước 1: Cài đặt dependencies
+Chạy từ thư mục gốc `AquaCraft`:
 ```bash
-# Cài đặt cho frontend
-cd frontend
-npm install
-
-# Cài đặt cho backend
-cd ../backend
-npm install
+npm --prefix backend install
+npm --prefix frontend install
 ```
 
-### Chạy từ thư mục gốc `AquaCraft`:
-```bash
-# Chạy Frontend (http://localhost:5173)
-npm run dev:frontend
+### Bước 2: Cấu hình biến môi trường (`.env`)
+Tạo file `.env` bên trong thư mục `backend/` (hoặc nhân bản từ `backend/.env.example`):
+- **Windows (PowerShell):**
+  ```powershell
+  Copy-Item backend/.env.example backend/.env
+  ```
+- **macOS / Linux:**
+  ```bash
+  cp backend/.env.example backend/.env
+  ```
 
-# Chạy Backend (http://localhost:5000)
-npm run dev:backend
+> [!IMPORTANT]
+> **Nội dung file `backend/.env`:**
+> ```env
+> PORT=5000
+> NODE_ENV=development
+> MONGO_URI=mongodb+srv://anhtxsc000:team1234@cluster0.ree787p.mongodb.net/aquacraft?retryWrites=true&w=majority
+> JWT_SECRET=aquacraft_super_secret_jwt_key_2026
+> JWT_EXPIRES_IN=7d
+> CLIENT_URL=http://localhost:5173
+> ```
+
+### Bước 3: Khởi chạy dự án
+Chạy đồng thời hoặc từng phần từ thư mục gốc `AquaCraft`:
+```bash
+# Chạy Backend API (http://localhost:5000)
+npm run server
+
+# Chạy Frontend UI (http://localhost:5173)
+npm run client
 ```
+
+---
+
+## 3. Ghi chú quan trọng về Database & Tài khoản mẫu
+
+> [!WARNING]
+> **KHÔNG chạy lại lệnh `npm run seed:backend`**:
+> - Database hiện tại đang lưu trữ trực tiếp trên **MongoDB Atlas Cloud dùng chung**.
+> - Dữ liệu đã được nạp sẵn. Nếu chạy lại script seed, database sẽ bị xóa toàn bộ (`deleteMany`) để nạp lại từ đầu!
+
+### Tài khoản mẫu đã seed sẵn trong DB:
+| Vai trò | Email | Mật khẩu |
+| :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin@aquacraft.com` | `admin123` |
+| **Khách hàng (User)** | `khachhang@gmail.com` | `user123` |
