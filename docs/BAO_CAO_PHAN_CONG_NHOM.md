@@ -1,132 +1,152 @@
-# BÁO CÁO PHÂN TÍCH KIẾN TRÚC HỆ THỐNG & PHÂN CÔNG NHIỆM VỤ DỰ ÁN AQUACRAFT
+# BÁO CÁO PHÂN CHIA CÔNG VIỆC CHI TIẾT (FRONTEND & BACKEND)
+## DỰ ÁN THƯƠNG MẠI ĐIỆN TỬ AQUACRAFT
 
-**Dự án:** Hệ thống Thương mại Điện tử Thủy sinh & Sinh vật cảnh AquaCraft  
-**Khóa học:** DevOps / Kỹ thuật Phần mềm  
-**Mô hình kiến trúc:** Feature-Driven Monorepo (Vertical Slice Architecture)  
-**Quy mô nhóm:** 4 Thành viên  
-
----
-
-## 1. TỔNG QUAN DỰ ÁN & BỐI CẢNH TÁI CẤU TRÚC
-
-### 1.1. Hiện trạng trước khi tái cấu trúc
-* **Lồng thư mục thừa:** Toàn bộ mã nguồn bị đặt sâu trong thư mục `AquaCraft/FishShop/`, gây cồng kềnh cho đường dẫn, khó viết cấu hình Docker và pipeline CI/CD.
-* **Cấu trúc Layer-based truyền thống:** Chia theo tầng kỹ thuật rời rạc (`components`, `controllers`, `services` nằm riêng). Khi phát triển một tính năng như "Sản phẩm", lập trình viên phải nhảy qua lại giữa 5-6 thư mục xa nhau.
-* **Nhầm lẫn phân quyền:** `admin` bị coi là một feature độc lập, dẫn đến việc logic của sản phẩm và đơn hàng bị phân mảnh làm đôi (nửa ở feature chính, nửa ở feature admin).
-
-### 1.2. Giải pháp sau khi tái cấu trúc
-* Đưa toàn bộ về thư mục gốc chuẩn **Monorepo**: `frontend/` và `backend/`.
-* Chuyển đổi sang **Feature-Driven Architecture (Kiến trúc hướng tính năng / Vertical Slice)**: Gom toàn bộ Model, Route, Controller, Service của Backend và Component, Page, Hook, API của Frontend vào đúng tính năng nghiệp vụ đó.
+* **Môn học:** DevOps / Kỹ thuật Phần mềm
+* **Mô hình triển khai:** Feature-Driven Monorepo (Vertical Slice Architecture)
+* **Quy mô:** Nhóm 4 Thành viên
 
 ---
 
-## 2. GIẢI THÍCH THUẬT NGỮ KIẾN TRÚC & SƠ ĐỒ CÂY
+## 1. NGUYÊN TẮC PHÂN CHIA (VERTICAL SLICE FULLSTACK)
+Mỗi thành viên trong nhóm 4 người sẽ đảm nhận **trọn gói một lát cắt dọc (Vertical Slice)** bao gồm cả:
+1. **Phần Backend (BE):** Database Model, Business Logic (Service), API Endpoints (Controller, Routes), Middlewares bảo vệ.
+2. **Phần Frontend (FE):** Giao diện (Pages, Components), Gọi API (Services), Quản lý State/Hooks, Kiểm tra dữ liệu (Validation).
 
-### 2.1. Tên gọi học thuật
-1. **Sơ đồ cây (Project Directory Tree):** Biểu diễn trực quan hệ thống tệp và cấu trúc phân cấp thư mục của toàn bộ kho lưu trữ mã nguồn.
-2. **Feature-Driven Architecture / Package by Feature (Kiến trúc hướng tính năng):** Còn được gọi là **Screaming Architecture** (Kiến trúc "nhìn vào là thấy ngay nghiệp vụ"), nơi các tệp mã nguồn được tổ chức theo Domain nghiệp vụ thay vì vai trò kỹ thuật.
-3. **Vertical Slice Architecture:** Mỗi tính năng là một lát cắt dọc độc lập, chứa trọn vẹn từ tầng giao diện (UI), tầng nghiệp vụ (Business Logic) đến tầng cơ sở dữ liệu (Data Access).
-
-### 2.2. Sơ đồ cây thư mục chi tiết
-
-```text
-AquaCraft/
-│
-├── frontend/                               # ỨNG DỤNG FRONTEND (React 19, Vite)
-│   ├── public/                             # Tài nguyên công khai (favicon, manifest)
-│   ├── src/
-│   │   ├── app/                            # Khởi tạo & Cấu hình ứng dụng
-│   │   │   ├── App.jsx                     # Root React Component
-│   │   │   ├── router.jsx                  # Cấu hình định tuyến tập trung
-│   │   │   └── providers.jsx               # Khai báo Context/State Providers
-│   │   ├── assets/                         # Ảnh, icons, fonts tĩnh
-│   │   ├── components/                     # UI tái sử dụng toàn hệ thống
-│   │   │   ├── common/                     # Button, Input, Modal, Table...
-│   │   │   └── layout/                     # MainLayout, AdminLayout
-│   │   ├── features/                       # MODULE TÍNH NĂNG NGHIỆP VỤ
-│   │   │   ├── auth/                       # Đăng ký, đăng nhập, quên pass
-│   │   │   ├── products/                   # Danh mục, chi tiết cá cảnh, bộ lọc
-│   │   │   ├── cart/                       # Giỏ hàng, cập nhật số lượng
-│   │   │   ├── orders/                     # Đặt hàng, checkout, lịch sử
-│   │   │   ├── reviews/                    # Đánh giá sao, bình luận
-│   │   │   └── users/                      # Hồ sơ cá nhân, địa chỉ nhận hàng
-│   │   ├── services/                       # Axios Client & Interceptors (api.js)
-│   │   └── utils/                          # Format tiền tệ, ngày tháng (formatters.js)
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend/                                # ỨNG DỤNG BACKEND (Express, MongoDB)
-│   ├── src/
-│   │   ├── server.js                       # Điểm khởi động HTTP Server & DB
-│   │   ├── app.js                          # Cấu hình Express app & gắn routes
-│   │   ├── configs/                        # Cấu hình DB và biến môi trường
-│   │   ├── middlewares/                    # Middleware (JWT Auth, Error, Upload)
-│   │   ├── features/                       # CÁC LÁT CẮT DỌC (VERTICAL SLICES)
-│   │   │   ├── auth/                       # Controller, Service, Routes
-│   │   │   ├── users/                      # Model, Controller, Service, Routes
-│   │   │   ├── products/                   # Model, Controller, Service, Routes
-│   │   │   ├── cart/                       # Model, Controller, Service, Routes
-│   │   │   ├── orders/                     # Model, Controller, Service, Routes
-│   │   │   └── reviews/                    # Model, Controller, Service, Routes
-│   │   └── utils/                          # Custom ApiError, Response Handler
-│   ├── .env.example
-│   └── package.json
-│
-├── docs/                                   # Tài liệu & Báo cáo kỹ thuật
-├── package.json                            # Root scripts điều khiển cả 2 phần
-└── README.md
-```
+> [!TIP]
+> **Ưu điểm vượt trội:**
+> * Không ai phải chờ đợi nhau (FE tự làm API và tự kết nối ngay lập tức).
+> * Giảm triệt để 100% nguy cơ xung đột mã nguồn (Merge Conflict) vì mỗi người thao tác trên một thư mục `features/<tên_tính_năng>/` riêng biệt ở cả 2 đầu FE & BE.
 
 ---
 
-## 3. KẾ HOẠCH PHÂN CHIA NHIỆM VỤ CHO NHÓM 4 NGƯỜI
+## 2. BẢNG TỔNG HỢP MA TRẬN PHÂN CÔNG 4 THÀNH VIÊN
 
-Áp dụng phương pháp phân chia **Vertical Slice (Fullstack theo tính năng)**: Mỗi thành viên chịu trách nhiệm trọn vẹn cả Frontend và Backend của tính năng mình phụ trách, kèm theo một mảng trách nhiệm về DevOps / Nền tảng kỹ thuật.
-
-### 3.1. Bảng phân công ma trận trách nhiệm
-
-| Thành viên | Tính năng phụ trách | Trách nhiệm Backend | Trách nhiệm Frontend | Trách nhiệm DevOps & Hệ thống |
+| Thành viên | Tính năng phụ trách | Khối lượng Frontend (FE) | Khối lượng Backend (BE) | Trách nhiệm DevOps & Hệ thống |
 | :--- | :--- | :--- | :--- | :--- |
-| **TV 1** *(Lead)* | **Xác thực & Quản lý Người dùng** | • `features/auth/`<br>• `features/users/`<br>• `auth.middleware.js` (JWT & Phân quyền) | • `features/auth/` (Login, Register)<br>• `features/users/` (Profile)<br>• `MainLayout`, `AdminLayout` | • Khởi tạo Dockerfile (FE & BE)<br>• Cấu hình `docker-compose.yml`<br>• Quản lý nhánh chính Git & Review PR |
-| **TV 2** | **Cá cảnh & Danh mục sản phẩm** | • `features/products/`<br>• Tích hợp Multer upload ảnh cá cảnh/thủy sinh<br>• Lọc, tìm kiếm, phân trang | • `features/products/` (Catalog, bộ lọc nước mặn/ngọt, chi tiết cá cảnh)<br>• Trang Admin quản lý sản phẩm | • Cấu hình Volume lưu trữ Media/Ảnh<br>• Tối ưu kích thước bundle ảnh/static assets |
-| **TV 3** | **Giỏ hàng & Đơn hàng (Core Business)** | • `features/cart/`<br>• `features/orders/`<br>• Logic trừ kho, tính tổng tiền, trạng thái đơn | • `features/cart/` (Giỏ hàng, tính tạm tính)<br>• `features/orders/` (Checkout, Lịch sử mua hàng, Admin duyệt đơn) | • Viết Unit Test & Integration Test cho luồng thanh toán / tính tiền |
-| **TV 4** | **Đánh giá & Thống kê Quản trị** | • `features/reviews/`<br>• API thống kê Dashboard Admin (Doanh thu, số đơn, top bán chạy) | • `features/reviews/` (Rating, bình luận)<br>• Trang `Admin Dashboard` (Thống kê biểu đồ, thẻ tổng quan) | • Xây dựng tài liệu API (Postman / Swagger)<br>• Cấu hình Healthcheck & Logging (Morgan) |
+| **TV 1** *(Lead)* | **Xác thực & Người dùng** (`auth`, `users`) | • Trang Login, Register<br>• Trang Profile cá nhân<br>• Bảng quản trị User (Admin)<br>• Header Layout & AuthContext | • User Model & bcrypt hash<br>• JWT Token & Auth Middleware<br>• API Login, Register, Profile<br>• Phân quyền Admin | • Dockerfile cho FE & BE<br>• docker-compose.yml<br>• Quản trị Git & Review PR |
+| **TV 2** | **Cá cảnh & Danh mục** (`products`) | • Danh sách cá cảnh & bộ lọc nước ngọt/mặn<br>• Trang chi tiết cá cảnh & thông số pH<br>• Trang Admin CRUD sản phẩm & upload ảnh | • Product Model<br>• Multer upload hình ảnh cá<br>• API tìm kiếm, phân trang, lọc giá<br>• API thêm, sửa, xóa sản phẩm | • Cấu hình Volume lưu ảnh<br>• Tối ưu kích thước bundle ảnh/static |
+| **TV 3** | **Giỏ hàng & Đơn hàng** (`cart`, `orders`) | • Giỏ hàng & cập nhật số lượng<br>• Trang Checkout & chọn thanh toán<br>• Lịch sử đơn hàng của khách<br>• Admin duyệt & đổi trạng thái đơn | • Cart Model & Order Model<br>• API CRUD giỏ hàng<br>• API Đặt hàng, trừ tồn kho<br>• API đổi trạng thái đơn hàng | • Viết Unit Test & Integration Test cho luồng tính tiền / đặt hàng |
+| **TV 4** | **Đánh giá & Thống kê** (`reviews`, `dashboard`) | • Đánh giá sao (1-5★) & form bình luận<br>• Danh sách review dưới chi tiết sản phẩm<br>• Trang Admin Dashboard (Cards & Biểu đồ) | • Review Model<br>• API đánh giá có kiểm tra đã mua hàng<br>• API thống kê tổng doanh thu, số đơn, top bán chạy | • Viết tài liệu API (Postman / Swagger)<br>• Cấu hình Healthcheck & Logging (Morgan) |
 
 ---
 
-## 4. QUY TRÌNH PHỐI HỢP GIT ĐỂ TRÁNH XUNG ĐỘT (GIT WORKFLOW)
+## 3. ĐẶC TẢ CHI TIẾT TỪNG FILE & NHIỆM VỤ CỦA TỪNG BẠN
 
-### 4.1. Quy tắc phân nhánh (Feature Branching)
-* Nhánh `main`: Chỉ chứa mã nguồn ổn định, không ai được push trực tiếp lên `main`.
-* Mỗi thành viên tạo nhánh riêng tương ứng với tính năng:
-  * TV 1: `git checkout -b feature/auth-users`
-  * TV 2: `git checkout -b feature/products-catalog`
-  * TV 3: `git checkout -b feature/cart-orders`
-  * TV 4: `git checkout -b feature/reviews-dashboard`
+### 👤 THÀNH VIÊN 1: AUTHENTICATION & USER MANAGEMENT (XÁC THỰC & TÀI KHOẢN)
 
-### 4.2. Quy ước Commit (Conventional Commits)
-* `feat:` Tính năng mới (ví dụ: `feat(products): add filter by water type`)
-* `fix:` Sửa lỗi (ví dụ: `fix(cart): resolve total amount calculation bug`)
-* `refactor:` Tối ưu mã nguồn nhưng không đổi chức năng
-* `docs:` Viết tài liệu báo cáo hoặc hướng dẫn
-* `ci:` Cấu hình CI/CD hoặc Docker
+#### 🔹 Phần Backend (BE):
+* **Model:** `backend/src/features/users/user.model.js`
+  * Thuộc tính: `name`, `email` (unique, lowercase), `password` (băm bằng `bcryptjs`), `role` ('user' | 'admin'), `phone`, `address`.
+* **Middlewares:** `backend/src/middlewares/auth.middleware.js`
+  * `verifyToken`: Giải mã Bearer JWT token từ header `Authorization`, gán vào `req.user`.
+  * `verifyAdmin`: Kiểm tra `req.user.role === 'admin'`.
+* **Logic & Routes:** `backend/src/features/auth/` & `backend/src/features/users/`
+  * `POST /api/auth/register`: Nhận `{ name, email, password }` ➔ Kiểm tra trùng email ➔ Hash pass ➔ Trả về user và JWT.
+  * `POST /api/auth/login`: Nhận `{ email, password }` ➔ Kiểm tra mật khẩu ➔ Trả về JWT token.
+  * `GET /api/auth/me`: Lấy thông tin user hiện tại qua token.
+  * `GET /api/users/profile`: Lấy thông tin chi tiết user đăng nhập.
+  * `PUT /api/users/profile`: Cập nhật `{ name, phone, address }`.
+  * `GET /api/users`: (Chỉ Admin) Lấy danh sách toàn bộ người dùng.
 
-### 4.3. Quy trình gộp mã nguồn (Pull Request Checklist)
-1. Kéo code mới nhất từ `main` về nhánh cá nhân trước khi mở PR:
-   ```bash
-   git checkout main
-   git pull origin main
-   git checkout <ten-nhanh-ca-nhan>
-   git merge main
-   ```
-2. Đẩy nhánh lên GitHub và tạo Pull Request vào `main`.
-3. Ít nhất 1 thành viên khác review và phê duyệt (Approve) mới được merge.
+#### 🔹 Phần Frontend (FE):
+* **Services & Context:**
+  * `frontend/src/features/auth/services/authApi.js`: Gọi API `login`, `register`, `getMe`.
+  * `frontend/src/features/users/services/userApi.js`: Gọi API `getProfile`, `updateProfile`.
+  * `frontend/src/features/auth/hooks/useAuth.js`: Quản lý state token, user, isAuthenticated, login, logout.
+* **Giao diện Pages & Components:**
+  * `frontend/src/features/auth/pages/LoginPage.jsx`: Form đăng nhập, validate email, hiện lỗi nếu sai mật khẩu.
+  * `frontend/src/features/auth/pages/RegisterPage.jsx`: Form đăng ký có kiểm tra xác nhận lại mật khẩu.
+  * `frontend/src/features/users/pages/ProfilePage.jsx`: Xem & sửa thông tin cá nhân, địa chỉ nhận hàng.
+  * `frontend/src/features/users/pages/AdminUserManagePage.jsx`: Bảng người dùng cho Admin.
+  * `frontend/src/components/layout/MainLayout.jsx`: Hiển thị tên/avatar khi đăng nhập, nút Đăng xuất.
 
 ---
 
-## 5. LỘ TRÌNH TRIỂN KHAI CHO MÔN HỌC DEVOPS
+### 🐟 THÀNH VIÊN 2: PRODUCTS & CATALOG MANAGEMENT (SẢN PHẨM & CÁ CẢNH)
 
-1. **Giai đoạn 1 (Tính năng cốt lõi):** Các thành viên hoàn thiện các module nghiệp vụ cục bộ (Local).
-2. **Giai đoạn 2 (Containerization):** Viết `Dockerfile` nhiều tầng (Multi-stage build) cho FE (Nginx) và BE (Node Alpine), chạy thống nhất qua `docker-compose up`.
-3. **Giai đoạn 3 (CI/CD Automation):** Xây dựng GitHub Actions tự động kiểm tra Lint, chạy Test và Build Docker Image khi có PR vào nhánh `main`.
-4. **Giai đoạn 4 (Testing & Giám sát):** Kiểm thử tự động, cấu hình giám sát Logs và hoàn tất tài liệu bảo vệ đồ án.
+#### 🔹 Phần Backend (BE):
+* **Model:** `backend/src/features/products/product.model.js`
+  * Thuộc tính: `name`, `description`, `price`, `category` ('fish', 'plant', 'accessory', 'tank', 'food'), `stock`, `images` (array string), `origin`, `waterType` ('freshwater', 'saltwater'), `isActive` (boolean).
+* **Middlewares:** `backend/src/middlewares/upload.middleware.js`
+  * Cấu hình Multer nhận file upload ảnh từ multipart/form-data.
+* **Logic & Routes:** `backend/src/features/products/`
+  * `GET /api/products`: Lấy danh sách cá cảnh. Hỗ trợ query: `?category=&waterType=&search=&minPrice=&maxPrice=&page=&limit=`.
+  * `GET /api/products/:id`: Lấy chi tiết 1 con cá/sản phẩm.
+  * `POST /api/products`: (Admin) Thêm sản phẩm mới kèm tải ảnh lên.
+  * `PUT /api/products/:id`: (Admin) Cập nhật giá, số lượng tồn kho.
+  * `DELETE /api/products/:id`: (Admin) Xóa mềm sản phẩm (`isActive = false`).
+
+#### 🔹 Phần Frontend (FE):
+* **Services & Hooks:**
+  * `frontend/src/features/products/services/productApi.js`: Gọi API lấy danh sách, chi tiết, CRUD sản phẩm.
+  * `frontend/src/features/products/hooks/useProducts.js`: Quản lý query params (page, filter, search), loading state.
+* **Giao diện Pages & Components:**
+  * `frontend/src/features/products/components/ProductCard.jsx`: Thẻ hiển thị cá cảnh (ảnh, tên, tag nước ngọt/mặn, giá VND, nút mua).
+  * `frontend/src/features/products/components/ProductFilter.jsx`: Bộ lọc theo loài cá, môi trường nước ngọt/mặn, khoảng giá.
+  * `frontend/src/features/products/pages/ProductListPage.jsx`: Grid danh sách sản phẩm, thanh tìm kiếm (search bar) và phân trang.
+  * `frontend/src/features/products/pages/ProductDetailPage.jsx`: Xem ảnh lớn, thông số độ pH/nhiệt độ, chọn số lượng mua, nút "Thêm vào giỏ".
+  * `frontend/src/features/products/pages/AdminProductManagePage.jsx`: Bảng quản lý sản phẩm cho Admin, modal form thêm cá mới/upload ảnh.
+
+---
+
+### 🛒 THÀNH VIÊN 3: CART & ORDER PROCESSING (GIỎ HÀNG & ĐƠN HÀNG)
+
+#### 🔹 Phần Backend (BE):
+* **Model:** 
+  * `backend/src/features/cart/cart.model.js`: `user`, `items: [{ product (ref), quantity }]`.
+  * `backend/src/features/orders/order.model.js`: `user`, `items: [{ product, name, price, quantity }]`, `totalAmount`, `shippingAddress`, `phoneNumber`, `paymentMethod` ('cod' | 'banking'), `status` ('pending', 'confirmed', 'shipping', 'delivered', 'cancelled').
+* **Logic & Routes:** `backend/src/features/cart/` & `backend/src/features/orders/`
+  * `GET /api/cart`: Lấy giỏ hàng của user đang đăng nhập (populate chi tiết cá).
+  * `POST /api/cart/add`: Thêm vào giỏ hoặc tăng số lượng `{ productId, quantity }`.
+  * `DELETE /api/cart/:productId`: Xóa 1 sản phẩm khỏi giỏ hàng.
+  * `POST /api/orders`: Tạo đơn hàng từ giỏ hàng (Kiểm tra `stock` trong kho, tính `totalAmount`, trừ số lượng tồn kho của cá, xóa sạch giỏ hàng).
+  * `GET /api/orders/my-orders`: Xem danh sách đơn hàng đã mua của user.
+  * `GET /api/orders/admin`: (Admin) Xem toàn bộ đơn hàng trong hệ thống.
+  * `PATCH /api/orders/:id/status`: (Admin) Cập nhật trạng thái đơn hàng (`pending` ➔ `shipping` ➔ `delivered` hoặc `cancelled`).
+
+#### 🔹 Phần Frontend (FE):
+* **Services & Hooks:**
+  * `frontend/src/features/cart/services/cartApi.js`: Gọi API lấy giỏ, thêm vào giỏ, xóa khỏi giỏ.
+  * `frontend/src/features/orders/services/orderApi.js`: Gọi API tạo đơn, lịch sử đơn, đổi trạng thái.
+  * `frontend/src/features/cart/hooks/useCart.js`: Quản lý state giỏ hàng, số lượng badge hiển thị trên Header.
+* **Giao diện Pages & Components:**
+  * `frontend/src/features/cart/pages/CartPage.jsx`: Bảng giỏ hàng, nút tăng giảm [+] [-], tính tạm tính, nút "Tiến hành đặt hàng".
+  * `frontend/src/features/orders/pages/CheckoutPage.jsx`: Form nhập địa chỉ nhận hàng, số điện thoại, chọn thanh toán COD/Chuyển khoản, nút "Xác nhận đặt hàng".
+  * `frontend/src/features/orders/pages/OrderHistoryPage.jsx`: Danh sách đơn hàng đã đặt của khách, gắn tag màu theo trạng thái.
+  * `frontend/src/features/orders/pages/AdminOrderManagePage.jsx`: Bảng đơn hàng cho Admin, dropdown chuyển trạng thái đơn.
+
+---
+
+### ⭐ THÀNH VIÊN 4: REVIEWS & ADMIN DASHBOARD (ĐÁNH GIÁ & BÁO CÁO THỐNG KÊ)
+
+#### 🔹 Phần Backend (BE):
+* **Model:** `backend/src/features/reviews/review.model.js`
+  * Thuộc tính: `product` (ref), `user` (ref), `rating` (1-5 sao), `comment` (string).
+* **Logic & Routes:** `backend/src/features/reviews/`
+  * `GET /api/reviews/product/:productId`: Lấy toàn bộ đánh giá của 1 sản phẩm (populate tên người đánh giá).
+  * `POST /api/reviews/product/:productId`: Gửi đánh giá sao và bình luận (Yêu cầu đăng nhập; kiểm tra nếu đã mua hàng mới cho đánh giá).
+  * `GET /api/admin/dashboard/stats`: Thống kê tổng hợp cho Admin (Tổng doanh thu VNĐ, tổng số đơn hàng, tổng số cá cảnh, tổng số khách hàng).
+  * `GET /api/admin/dashboard/recent-orders`: Lấy 5 đơn hàng mới nhất cần xử lý.
+  * `GET /api/admin/dashboard/top-products`: Top 5 sản phẩm bán chạy nhất.
+
+#### 🔹 Phần Frontend (FE):
+* **Services & Hooks:**
+  * `frontend/src/features/reviews/services/reviewApi.js`: Gọi API lấy đánh giá, gửi đánh giá.
+  * `frontend/src/features/admin/services/dashboardApi.js`: Gọi API lấy số liệu thống kê Dashboard.
+  * `frontend/src/features/reviews/hooks/useReviews.js`: Quản lý danh sách đánh giá của sản phẩm.
+* **Giao diện Pages & Components:**
+  * `frontend/src/features/reviews/components/StarRating.jsx`: Component hiển thị và chọn số sao (1-5 sao vàng).
+  * `frontend/src/features/reviews/components/ReviewList.jsx`: Danh sách bình luận khách hàng (tên, số sao, nội dung, ngày đăng).
+  * `frontend/src/features/reviews/components/ReviewForm.jsx`: Ô nhập nhận xét và chọn sao đặt ngay dưới trang chi tiết cá cảnh.
+  * `frontend/src/features/admin/pages/AdminDashboardPage.jsx`: Màn hình Admin Dashboard với 4 thẻ tổng quan (Doanh thu, Đơn hàng, Sản phẩm, Khách hàng), bảng 5 đơn mới nhất và danh sách bán chạy.
+
+---
+
+## 4. QUY TRÌNH PHỐI HỢP GIT WORKFLOW
+1. **Mỗi người 1 nhánh riêng:**
+   * TV 1: `git checkout -b feature/auth-users`
+   * TV 2: `git checkout -b feature/products-catalog`
+   * TV 3: `git checkout -b feature/cart-orders`
+   * TV 4: `git checkout -b feature/reviews-dashboard`
+2. **Quy tắc thao tác:** Chỉ code trong thư mục feature của mình ở cả FE và BE.
+3. **Pull Request (PR):** Kéo code mới nhất từ `main` về nhánh mình (`git merge main`), test chạy thử ổn định rồi mới mở PR để cả nhóm duyệt.
