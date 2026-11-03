@@ -1,11 +1,14 @@
 {
-  "name": "fish-shop",
+  "name": "aquacraft",
   "version": "1.0.0",
   "private": true,
+  "description": "AquaCraft - E-commerce platform for aquarium fish and accessories",
   "scripts": {
-    "client": "npm --prefix client run dev",
-    "server": "npm --prefix server run dev",
-    "client:build": "npm --prefix client run build",
-    "server:start": "npm --prefix server start"
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "start:backend": "npm --prefix backend start",
+    "client": "npm --prefix frontend run dev",
+    "server": "npm --prefix backend run dev"
   }
 }

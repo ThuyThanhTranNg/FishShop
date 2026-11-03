@@ -1,103 +1,100 @@
-# Dự án Web Bán Cá (Fish Shop)
+# AquaCraft - E-Commerce Platform
 
-Dự án website thương mại điện tử chuyên bán cá cảnh / thủy sinh / hải sản sử dụng **React (Frontend)** và **Node.js/Express + MongoDB (Backend)** theo kiến trúc **Feature-based (hướng tính năng)**.
+Dự án website thương mại điện tử chuyên cung cấp cá cảnh, thủy sinh và phụ kiện hồ cá cao cấp (**AquaCraft**), xây dựng bằng **React (Frontend)** và **Node.js/Express + MongoDB (Backend)** theo kiến trúc **Feature-Driven Architecture (Hướng tính năng)**.
 
 ---
 
-## Cấu trúc thư mục (Feature-based Architecture)
+## 1. Cấu trúc dự án (Directory Tree)
 
 ```text
-ShopFish/
-├── client/                               # Giao diện người dùng (React)
-│   ├── public/                           # File tĩnh (favicon, index.html, v.v.)
-│   └── src/
-│       ├── assets/                       # Ảnh, icon, CSS dùng chung
-│       │   ├── icons/
-│       │   ├── images/
-│       │   └── styles/
-│       ├── components/                   # Component dùng chung toàn app
-│       │   ├── common/                   # Button, Input, Modal, Table, v.v.
-│       │   └── layout/                   # Header, Footer, Sidebar, Navbar
-│       ├── configs/                      # Cấu hình routes, axios client, constants
-│       ├── context/                      # Global state (Theme, Auth Context, v.v.)
-│       ├── hooks/                        # Custom React hooks dùng chung
-│       ├── services/                     # API client & helpers dùng chung
-│       ├── utils/                        # Hàm tiện ích (format tiền tệ, ngày tháng, v.v.)
-│       └── features/                     # Chia theo từng tính năng (Feature-based)
-│           ├── auth/                     # Tính năng: Đăng ký / Đăng nhập / Xác thực
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           ├── products/                 # Tính năng: Danh mục cá, chi tiết cá, bộ lọc
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           ├── cart/                     # Tính năng: Giỏ hàng
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           ├── orders/                   # Tính năng: Đặt hàng & thanh toán (Checkout)
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           ├── reviews/                  # Tính năng: Đánh giá & nhận xét cá
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           ├── user/                     # Tính năng: Thông tin cá nhân & sổ địa chỉ
-│           │   ├── components/
-│           │   ├── hooks/
-│           │   ├── services/
-│           │   └── pages/
-│           └── admin/                    # Tính năng: Dashboard quản trị (kho cá, đơn hàng)
-│               ├── components/
-│               ├── hooks/
-│               ├── services/
-│               └── pages/
+AquaCraft/
 │
-└── server/                               # Backend REST API (Node.js/Express + MongoDB)
-    └── src/
-        ├── configs/                      # Kết nối MongoDB (Mongoose), env, v.v.
-        ├── middlewares/                  # Xác thực JWT, bắt lỗi (ErrorHandler), upload ảnh
-        ├── utils/                        # Hàm tiện ích xử lý logic
-        └── features/                     # Chia theo từng tính năng
-            ├── auth/                     # Đăng nhập, đăng ký, JWT token
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            ├── products/                 # Quản lý cá (loài cá, môi trường nước, giá cả, số lượng)
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            ├── cart/                     # Xử lý thêm/bớt giỏ hàng
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            ├── orders/                   # Tạo đơn hàng, thanh toán, trạng thái giao vận
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            ├── users/                    # Quản lý tài khoản khách hàng
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            ├── reviews/                  # Đánh giá sản phẩm
-            │   ├── controllers/
-            │   ├── models/
-            │   ├── routes/
-            │   └── services/
-            └── admin/                    # Thống kê doanh thu, quản lý danh mục và hệ thống
-                ├── controllers/
-                ├── routes/
-                └── services/
+├── frontend/                     # Giao diện người dùng (React 19 + Vite)
+│   ├── public/                   # Tài nguyên tĩnh công khai (favicon, svg, ...)
+│   ├── src/
+│   │   ├── app/                  # Khởi tạo ứng dụng & cấu hình tổng thể
+│   │   │   ├── App.jsx           # Root Component
+│   │   │   ├── router.jsx        # Tuyến đường điều hướng (React Router)
+│   │   │   └── providers.jsx     # Bọc các Providers (Auth, Theme, State)
+│   │   ├── assets/               # Hình ảnh, biểu tượng, styles tĩnh
+│   │   │   ├── icons/
+│   │   │   ├── images/
+│   │   │   └── styles/
+│   │   ├── components/           # UI Components tái sử dụng
+│   │   │   ├── common/           # Button, Modal, Input, Pagination...
+│   │   │   └── layout/           # MainLayout (Khách hàng), AdminLayout (Quản trị)
+│   │   ├── features/             # Module tính năng nghiệp vụ (Feature-based)
+│   │   │   ├── auth/             # Đăng ký, đăng nhập, bảo mật
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   ├── pages/        # LoginPage.jsx...
+│   │   │   │   └── services/
+│   │   │   ├── products/         # Quản lý cá cảnh, bộ lọc, chi tiết sản phẩm
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   ├── pages/        # ProductListPage.jsx...
+│   │   │   │   └── services/
+│   │   │   ├── cart/             # Giỏ hàng
+│   │   │   ├── orders/           # Thanh toán & đơn hàng
+│   │   │   ├── reviews/          # Đánh giá, bình luận
+│   │   │   └── users/            # Hồ sơ người dùng
+│   │   ├── services/             # Cấu hình API client chung (Axios instance)
+│   │   │   └── api.js
+│   │   ├── utils/                # Hàm tiện ích chung (format tiền tệ, ngày tháng...)
+│   │   │   └── formatters.js
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── backend/                      # RESTful API (Express + MongoDB)
+│   ├── src/
+│   │   ├── server.js             # Khởi động server HTTP & kết nối cơ sở dữ liệu
+│   │   ├── app.js                # Cấu hình Express app, middleware & gắn routes
+│   │   ├── configs/              # Cấu hình môi trường & MongoDB
+│   │   │   ├── db.config.js
+│   │   │   └── env.config.js
+│   │   ├── middlewares/          # Middleware hệ thống
+│   │   │   ├── auth.middleware.js       # Xác thực JWT & phân quyền Admin
+│   │   │   ├── error.middleware.js      # Bắt lỗi tập trung (Error Handler)
+│   │   │   └── upload.middleware.js     # Upload file/ảnh (Multer)
+│   │   ├── features/             # Vertical Slices theo từng nghiệp vụ
+│   │   │   ├── auth/             # auth.controller, auth.service, auth.routes
+│   │   │   ├── users/            # user.model, user.controller, user.service, user.routes
+│   │   │   ├── products/         # product.model, product.controller, product.service, product.routes
+│   │   │   ├── cart/             # cart.model, cart.controller, cart.service, cart.routes
+│   │   │   ├── orders/           # order.model, order.controller, order.service, order.routes
+│   │   │   └── reviews/          # review.model, review.controller, review.service, review.routes
+│   │   └── utils/                # Lớp lỗi chuẩn & hàm phản hồi
+│   │       ├── apiError.js
+│   │       └── responseHandler.js
+│   ├── .env.example
+│   └── package.json
+│
+├── package.json                  # Root Monorepo Scripts
+└── README.md
+```
+
+---
+
+## 2. Hướng dẫn cài đặt & Khởi chạy
+
+### Cài đặt dependencies:
+```bash
+# Cài đặt cho frontend
+cd frontend
+npm install
+
+# Cài đặt cho backend
+cd ../backend
+npm install
+```
+
+### Chạy từ thư mục gốc `AquaCraft`:
+```bash
+# Chạy Frontend (http://localhost:5173)
+npm run dev:frontend
+
+# Chạy Backend (http://localhost:5000)
+npm run dev:backend
 ```
