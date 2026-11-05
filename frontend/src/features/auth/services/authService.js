@@ -10,6 +10,23 @@ export const authService = {
     return response.data?.data;
   },
 
+  async register(userData) {
+    const response = await api.post('/auth/register', userData);
+    if (response.data?.data?.token) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    }
+    return response.data?.data;
+  },
+
+  async getMe() {
+    const response = await api.get('/auth/me');
+    if (response.data?.data) {
+      localStorage.setItem('user', JSON.stringify(response.data.data));
+    }
+    return response.data?.data;
+  },
+
   async quickAdminLogin() {
     return this.login('admin@aquacraft.com', 'admin123');
   },
@@ -39,4 +56,3 @@ export const authService = {
 };
 
 export default authService;
-

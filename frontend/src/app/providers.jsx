@@ -1,12 +1,8 @@
+import { AuthProvider } from '../features/auth/hooks/useAuth.jsx';
+
 /**
  * Global application providers wrapper
- * Can be extended with Redux Provider, QueryClientProvider, AuthProvider, etc.
  */
 export default function AppProviders({ children }) {
-  return (
-    <>
-      {children}
-    </>
-  );
+  return <AuthProvider>{children}</AuthProvider>;
 }
-

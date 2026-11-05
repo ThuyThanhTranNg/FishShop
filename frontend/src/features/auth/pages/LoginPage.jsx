@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, LogIn, AlertCircle } from 'lucide-react';
-import authService from '../services/authService.js';
+import { useNavigate, Link } from 'react-router-dom';
+import { ShieldCheck, LogIn, AlertCircle, Sparkles } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login, quickAdminLogin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,22 +16,30 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const data = await authService.login(email, password);
+      const data = await login(email, password);
       if (data?.user?.role === 'admin') {
-        navigate('/admin/products');
+        navigate('/admin');
       } else {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng nhập không thành công');
+      setError(err.response?.data?.message || 'Email hoặc mật khẩu không chính xác');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFillAdmin = () => {
-    setEmail('admin@aquacraft.com');
-    setPassword('admin123');
+  const handleQuickAdmin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await quickAdminLogin();
+      navigate('/admin');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Không thể đăng nhập admin tự động');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +48,7 @@ export default function LoginPage() {
         maxWidth: '420px',
         margin: '3rem auto',
         padding: '2rem',
-        background: '#ffffff',
+        backgroundColor: '#ffffff',
         border: '1px solid #e2e8f0',
         borderRadius: '6px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
@@ -51,24 +60,24 @@ export default function LoginPage() {
             width: '36px',
             height: '36px',
             borderRadius: '4px',
-            backgroundColor: '#f0fdf4',
+            backgroundColor: '#eff6ff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid #bbf7d0',
+            border: '1px solid #bfdbfe',
           }}
         >
-          <ShieldCheck color="#16a34a" size={20} />
+          <LogIn color="#0284c7" size={20} />
         </div>
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
             Đăng nhập hệ thống
           </h2>
         </div>
       </div>
 
       <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-        Đăng nhập để quản lý cá cảnh, thủy sinh và đơn hàng.
+        Đăng nhập vào tài khoản AquaCraft để mua sắm và quản lý.
       </p>
 
       {error && (
@@ -93,7 +102,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#334155', marginBottom: '0.35rem' }}>
+          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
             Email
           </label>
           <input
@@ -115,7 +124,7 @@ export default function LoginPage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#334155', marginBottom: '0.35rem' }}>
+          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
             Mật khẩu
           </label>
           <input
@@ -159,10 +168,17 @@ export default function LoginPage() {
           {loading ? 'Đang xử lý...' : 'Đăng nhập'}
         </button>
 
+        <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.875rem', color: '#64748b' }}>
+          Chưa có tài khoản?{' '}
+          <Link to="/register" style={{ color: '#0284c7', fontWeight: 600, textDecoration: 'none' }}>
+            Đăng ký tài khoản mới
+          </Link>
+        </div>
+
         <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', marginTop: '0.5rem' }}>
           <button
             type="button"
-            onClick={handleFillAdmin}
+            onClick={handleQuickAdmin}
             style={{
               width: '100%',
               padding: '0.5rem',
@@ -170,11 +186,17 @@ export default function LoginPage() {
               border: '1px dashed #cbd5e1',
               borderRadius: '4px',
               fontSize: '0.8125rem',
-              color: '#475569',
+              color: '#0284c7',
+              fontWeight: 600,
               cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.375rem',
             }}
           >
-            Điền tài khoản Admin mẫu (admin@aquacraft.com)
+            <Sparkles size={14} />
+            <span>Đăng nhập nhanh với quyền Admin mẫu</span>
           </button>
         </div>
       </form>

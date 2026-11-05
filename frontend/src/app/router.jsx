@@ -6,6 +6,9 @@ import AdminProductsPage from '../features/products/pages/AdminProductsPage.jsx'
 import AdminDashboardPage from '../features/dashboard/pages/AdminDashboardPage.jsx';
 import CartPage from '../features/cart/pages/CartPage.jsx';
 import LoginPage from '../features/auth/pages/LoginPage.jsx';
+import RegisterPage from '../features/auth/pages/RegisterPage.jsx';
+import ProfilePage from '../features/users/pages/ProfilePage.jsx';
+import AdminUserManagePage from '../features/users/pages/AdminUserManagePage.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +30,14 @@ export const router = createBrowserRouter([
       {
         path: 'login',
         element: <LoginPage />,
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
       },
     ],
   },
@@ -53,12 +64,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'users',
-        element: (
-          <div style={{ backgroundColor: '#ffffff', padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý người dùng</h1>
-            <p style={{ color: '#64748b', marginTop: '0.5rem', fontSize: '0.875rem' }}>Quản lý tài khoản khách hàng và phân quyền quản trị.</p>
-          </div>
-        ),
+        element: <AdminUserManagePage />,
       },
     ],
   },

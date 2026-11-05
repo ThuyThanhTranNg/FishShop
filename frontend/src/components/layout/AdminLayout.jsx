@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,19 +11,12 @@ import {
   Layers,
   Sparkles,
 } from 'lucide-react';
-import authService from '../../features/auth/services/authService.js';
+import { useAuth } from '../../features/auth/hooks/useAuth.jsx';
 
 export default function AdminLayout() {
-  const [user, setUser] = useState(authService.getCurrentUser());
-  const [isAdmin, setIsAdmin] = useState(authService.isAdmin());
+  const { user, isAdmin, logout, quickAdminLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
-    setIsAdmin(currentUser?.role === 'admin');
-  }, []);
 
   const getPageTitle = () => {
     if (location.pathname === '/admin') return 'Bảng điều khiển tổng quan (Dashboard)';
@@ -36,19 +28,14 @@ export default function AdminLayout() {
 
   const handleQuickAdminLogin = async () => {
     try {
-      const data = await authService.quickAdminLogin();
-      setUser(data.user);
-      setIsAdmin(true);
-      window.location.reload();
+      await quickAdminLogin();
     } catch (err) {
       alert('Không thể đăng nhập admin tự động: ' + (err.message || 'Lỗi server'));
     }
   };
 
   const handleLogout = () => {
-    authService.logout();
-    setUser(null);
-    setIsAdmin(false);
+    logout();
     navigate('/login');
   };
 
