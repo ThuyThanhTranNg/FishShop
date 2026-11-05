@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Fish, Droplets, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Fish, Droplets, ShoppingBag } from 'lucide-react';
 import productService from '../services/productService.js';
 import { formatCurrency } from '../../../utils/formatters.js';
 
@@ -20,52 +20,25 @@ export default function ProductListPage() {
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
           marginBottom: '2rem',
-          flexWrap: 'wrap',
-          gap: '1rem',
         }}
       >
-        <div>
-          <h1
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 'bold',
-              color: '#0f172a',
-              marginBottom: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <Fish color="#0284c7" /> Sinh vật cảnh & Thủy sinh cao cấp
-          </h1>
-          <p style={{ color: '#64748b' }}>
-            Khám phá các giống cá Betta, Cá Dĩa, Cá Biển và cây thủy sinh được tuyển chọn kỹ lưỡng.
-          </p>
-        </div>
-
-        <Link
-          to="/admin/products"
+        <h1
           style={{
-            display: 'inline-flex',
+            fontSize: '1.75rem',
+            fontWeight: 'bold',
+            color: '#0f172a',
+            marginBottom: '0.5rem',
+            display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: '#ffffff',
-            border: '1px solid #cbd5e1',
-            borderRadius: '4px',
-            color: '#0284c7',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            textDecoration: 'none',
           }}
         >
-          <span>Vào trang quản trị Admin</span>
-          <ArrowRight size={16} />
-        </Link>
+          <Fish color="#0284c7" /> Sinh vật cảnh & Thủy sinh cao cấp
+        </h1>
+        <p style={{ color: '#64748b' }}>
+          Khám phá các giống cá Betta, Cá Dĩa, Cá Biển và cây thủy sinh được tuyển chọn kỹ lưỡng.
+        </p>
       </div>
 
       {loading ? (
