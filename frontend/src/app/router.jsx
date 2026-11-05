@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout.jsx';
 import AdminLayout from '../components/layout/AdminLayout.jsx';
 import ProductListPage from '../features/products/pages/ProductListPage.jsx';
+import AdminProductsPage from '../features/products/pages/AdminProductsPage.jsx';
+import AdminDashboardPage from '../features/dashboard/pages/AdminDashboardPage.jsx';
 import CartPage from '../features/cart/pages/CartPage.jsx';
 import LoginPage from '../features/auth/pages/LoginPage.jsx';
 
@@ -34,37 +36,27 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a' }}>Admin Dashboard</h1>
-            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Thống kê tổng quan hệ thống AquaCraft.</p>
-          </div>
-        ),
+        element: <AdminDashboardPage />,
       },
       {
         path: 'products',
-        element: (
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý sản phẩm</h1>
-            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Danh sách và quản lý cá cảnh, thủy sinh.</p>
-          </div>
-        ),
+        element: <AdminProductsPage />,
       },
       {
         path: 'orders',
         element: (
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý đơn hàng</h1>
-            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Theo dõi và xử lý đơn hàng.</p>
+          <div style={{ backgroundColor: '#ffffff', padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý đơn hàng</h1>
+            <p style={{ color: '#64748b', marginTop: '0.5rem', fontSize: '0.875rem' }}>Tính năng theo dõi và xử lý đơn hàng đang được kết nối.</p>
           </div>
         ),
       },
       {
         path: 'users',
         element: (
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý người dùng</h1>
-            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Quản lý tài khoản và phân quyền.</p>
+          <div style={{ backgroundColor: '#ffffff', padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>Quản lý người dùng</h1>
+            <p style={{ color: '#64748b', marginTop: '0.5rem', fontSize: '0.875rem' }}>Quản lý tài khoản khách hàng và phân quyền quản trị.</p>
           </div>
         ),
       },

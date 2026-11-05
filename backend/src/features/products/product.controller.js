@@ -39,7 +39,8 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
   try {
-    await productService.deleteProduct(req.params.id);
+    const isHard = req.query.hard === 'true';
+    await productService.deleteProduct(req.params.id, isHard);
     sendSuccess(res, null, 'Xóa sản phẩm thành công');
   } catch (error) {
     next(error);
